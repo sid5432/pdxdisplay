@@ -1,0 +1,59 @@
+{% include "header.html" %}
+
+<FORM METHOD='post' ACTION="/">
+
+<blockquote style="margin:2pt 0pt 10pt 0pt;border:1px solid red;padding:4pt 10pt 4pt 10pt">
+<b>Import From PDX XML File:</b> <input TYPE="file" NAME="pdxfile"/>
+<INPUT TYPE="checkbox" NAME="clearall" ID="clearall"
+onClick="javascript:warning_remove()"/> remove old records
+&nbsp;&nbsp;&nbsp;
+<INPUT TYPE="submit" VALUE="Import XML"/></span>
+</blockquote>
+
+
+<p>
+<h2>All Top Level Items</h2>
+(<i>root/parent of BOM tree; click on link to display BOM tree</i>)
+
+<table cellspacing=0 border=1 cellpadding=4 style="margin:10pt 2pt 10pt 0pt;">
+<tr style="background:#CCCCCC">
+   <th>#</th>
+   <th>Item ID</th>
+   <th>Rev</th>
+   <th>Description</th>
+   <th>Category</th>
+</tr>
+{% for item in var.itemlist %}
+<tr>
+   <td style="text-align:center">{{ loop.index }}</td>
+   <td><A HREF="/bom?item={{ item.itemuniqueidentifier }}">{{ item.itemidentifier }}</A></td>
+   <td>{{ item.revisionidentifier }}</td>
+   <td>{{ item.description }}</td>
+   <td>{{ item.category }}</td>
+</tr>
+{% endfor %}
+</table>
+
+</FORM>
+<hr noshade>
+
+{% include "footer.html" %}
+
+<script type="text/javascript">
+function warning_remove() {
+    var tt = document.getElementById('clearall').checked;
+    if ( tt == false ) {
+        return;
+    }
+    
+    if ( confirm("WARNING: this will remove *ALL* old records from the database. Are you sure?") ) {
+        return;
+    }else{
+        document.getElementById('clearall').checked = false;
+    }
+    return;
+}
+</script>
+
+</body>
+</html>

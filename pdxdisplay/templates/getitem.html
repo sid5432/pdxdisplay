@@ -1,0 +1,162 @@
+<p>
+<span style="float:left;font-size:1.5em;"><b>Item Details</b>
+&nbsp;<span style="font-style:italic;color:#888888">(UID: {{ var.item.itemuniqueidentifier }})</span></span>
+<span style="display:block;text-align:right;">
+<A HREF="javascript:popdown()">Close</A></span>
+</p>
+
+<table border=1 cellspacing=0 cellpadding=2
+style="margin:4pt 10pt 4pt 10pt;width:95%">
+<tr style="background:#CCCCCC">
+   <th>Parameter</th>
+   <th>Value</th>
+</tr>
+<tr style="background:#FFFFAA">
+   <td><i>Item ID</i></td>
+   <td><b>{{ var.item.itemidentifier }}</b></td>
+</tr>
+<tr style="background:white">
+   <td><i>Description</i></td>
+   <td><b>{{ var.item.description }}</b></td>
+</tr>
+<tr style="background:#FFFFAA"><td>Revision ID</i></td>
+   <td><b>{{ var.item.revisionidentifier }}</b></td>
+</tr>
+<tr style="background:white">
+   <td><i>Is Top Level?</i></td>
+   {% set fontcolor = 'green' if var.item.istoplevel=='Yes' else 'red' %}
+   <td><span style="color:{{ fontcolor }}">{{ var.item.istoplevel }}</span></td>
+</tr>
+<tr style="background:#FFFFAA">
+   <td><i>Global Life Cycle Phase Code</i></td>
+   <td>{{ var.item.globallifecyclephasecode }}</td>
+</tr>
+<tr style="background:white">
+   <td><i>Global Life Cycle Phase Code Other</i></td>
+   <td>{{ var.item.globallifecyclephasecodeother }}</td>
+</tr>
+<tr style="background:#FFFFAA">
+   <td><i>Global Product Type Code</i></td>
+   <td>{{ var.item.globalproducttypecode }}</td>
+</tr>
+<tr style="background:white"><td><i>Item Classification</i></td>
+   <td>{{ var.item.itemclassification }}</td>
+</tr>
+<tr style="background:#FFFFAA"><td><i>Version ID</i></td>
+   <td>{{ var.item.versionidentifer }}</td>
+</tr>
+<tr style="background:white"><td><i>Proprietary Product Family</i></td>
+   <td>{{ var.item.proprietaryproductfamily }}</td>
+</tr>
+<tr style="background:#FFFFAA"><td><i>Category</i></td>
+   <td><b>{{ var.item.category }}</b></td>
+</tr>
+<tr style="background:white"><td>Global Product Unit of Measurecode</i></td>
+   <td>{{ var.item.globalproductunitofmeasurecode }}</td>
+</tr>
+<tr style="background:#FFFFAA"><td><i>Make/Buy</i></td>
+   <td>{{ var.item.makebuy }}</td>
+</tr>
+<tr style="background:white"><td><i>Make/Buy Other</i></td>
+   <td>{{ var.item.makebuyother }}</td>
+</tr>
+<tr style="background:#FFFFAA"><td><i>Minimum Shippable Revision</i></td>
+   <td>{{ var.item.minimumshippablerevision }}</td>
+</tr>
+<tr style="background:white"><td><i>Revision Released Date</i></td>
+   <td>{{ var.item.revisionreleaseddate }}</td>
+</tr>
+<tr style="background:#FFFFAA"><td><i>Revision Incorporated Date</i></td>
+   <td>{{ var.item.revisionincorporateddate }}</td>
+</tr>
+<tr style="background:white"><td><i>Is Serialization Required?</i></td>
+   <td>{{ var.item.isserializationrequired }}</td>
+</tr>
+<tr style="background:#FFFFAA"><td><i>Is Certification Required?</i></td>
+   <td>{{ var.item.iscertificationrequired }}</i></td>
+</tr>
+<tr style="background:white"><td><i>Owner Name</i></td>
+   <td>{{ var.item.ownername }}</td>
+</tr>
+<tr style="background:#FFFFAA"><td><i>Owner Contact UID</i></td>
+   <td>{{ var.item.ownercontactuniqueidentifier }}</td>
+</tr>
+</table>
+
+<p>
+<span style="font-size:1.5em;"><b>Attachments</b>
+
+{% if var.atcount > 0 %}
+<table border=1 cellspacing=0 cellpadding=2 style="margin:4pt 10pt 4pt 10pt;width:95%">
+{% for att in var.attachment %}
+<tr style="background:#CCCCCC">
+  <td colspan=4><i>Universal Resource ID:</i>&nbsp;<b>{{ att.universalresourceidentifier }}</b>
+  &nbsp;<span style="color:#444444">(<i>{{ att.fileidentifier }}.{{ att.universalresourceidentifier }}</i>)</span>
+  </td>
+</tr>
+<tr style="background:white">
+   <td><i>Description</i></td>
+   <td><b>{{ att.description }}</b></td>
+   <td><i>Modification Date</i></td>
+   <td>{{ att.attachmentmodificationdate }}</td>
+</tr>
+<tr style="background:#FFFFAA">
+   <td><i>Reference Name</i></td>
+   <td>{{ att.referencename }}</td>
+   <td><i>File ID</i></td>
+   <td>{{ att.fileidentifier }}</td>
+</tr>
+<tr style="background:white">
+   <td><i>File size</i></td>
+   <td>{{ att.filesize }}</td>
+   <td><i>Checksum</i></td>
+   <td>{{ att.checksum }}</td>
+</tr>
+<tr style="background:#FFFFAA">
+{% set ftcolor = 'green' if (att.isfilein=='Yes') else 'red' %}
+   <td><i>Is File Present?</i></td>
+   <td><span style="color:{{ ftcolor }}">{{ att.isfilein }}</span></td>
+   <td><i>Global MIME Type Qualifier Code</i></td>
+   <td><b>{{ att.globalmimetypequalifiercode }}</b></td>
+</tr>
+{% endfor %}
+</table>
+{% else %}
+<span style="margin:2pt 10pt 4pt 10pt;font-style:italic">(No attachments)</span>
+{% endif %}
+
+<p>
+<span style="font-size:1.5em;"><b>Approved Manufacturer List</b>
+
+{% if var.mfgcount > 0 %}
+<table border=1 cellspacing=0 cellpadding=2 style="margin:4pt 10pt 4pt 10pt;width:95%">
+{% for art in var.mfg %}
+<tr style="background:#CCCCCC">
+   <td><i>Manufactured By</i></td>
+   <td><b>{{ art.manufacturedby }}</b></td>
+   <td><i>Mfg. Part ID</i></td>
+   <td><b>{{ art.manufacturerpartidentifier }}</b></td>
+</tr>
+<tr>
+   <td><i>Description</i></td>
+   <td><b>{{ art.description }}</b></td>
+   <td><i>Mfg. Part UID</i></td>
+   <td>{{ manufacturerpartuniqueidentifier }}</td>
+</tr>
+<tr style="background:#FFFFAA">
+   <td>Mfg Contact UID</td>
+   <td>{{ art.manufacturercontactuniqueidentifier }}</td>
+   <td><i>Global Preferred Status Code</i></td>
+   <td>{{ art.globalpreferredstatuscode }}</td>
+</tr>
+<tr>
+   <td><i>Global Mfg. Part Status Code</i></td>
+   <td>{{ art.globalmanufacturerpartstatuscode }}</td>
+   <td><i>Global Mfg. Part Status Code Other</i></td>
+   <td>{{ art.globalmanufacturerpartstatuscodeother }}</td>
+</tr>
+{% endfor %}
+</table>
+{% else %}
+<span style="margin:2pt 10pt 4pt 10pt;font-style:italic">(No listing)</span>
+{% endif %}

@@ -1,0 +1,111 @@
+{% include "header.html" %}
+
+   <div ID="details"
+   style="z-index:100;position:absolute;left:50%;top:0px;
+   border:8pt solid #444444;background-color:#EEEEFF;
+   width:650pt;padding:10pt 20pt 10pt
+   20pt;display:none;">
+   <div ID="dcontents"></div>
+		
+   <A HREF="javascript:popdown()">Close</A>		
+   </div>
+
+<div ID="pageone">
+<A NAME="top"></A>
+<h2>Parts Master Listing</h2>
+
+<p>({{ var.itemcount }} Items)
+  {{ var.sortby }}
+  
+&nbsp;&nbsp;&nbsp;
+<span style="background:#44FF44;">&nbsp;&nbsp;&nbsp;</span>&nbsp;Top Level Item
+</p>
+
+<table cellspacing=0 border=1 cellpadding=4 style="margin:10pt 2pt 10pt 0pt;">
+<tr style="background:#CCCCCC">
+   <th>#</th>
+   <th><A HREF="/partsmaster?sort=Item%20ID">Item ID</A></th>
+   <th>Rev</th>
+   <th><A HREF="/partsmaster?sort=Description">Description</A></th>
+   <th><A HREF="/partsmaster?sort=Category">Category</A></th>
+   <th># Att.</th>
+   <th># Mfg.</th>
+</tr>
+{% for item in var.itemlist %}
+{% set bgcolor = '#FFFFAA' if (loop.index % 2 == 0) else 'white' %}
+{% set bgcolor = '#44FF44' if item.istoplevel else bgcolor %}
+<tr style="background:{{ bgcolor }}">
+   <td style="text-align:center"><A NAME="{{ loop.index }}"></A>{{ loop.index }}</td>
+   <td><A HREF="#pos{{ loop.index }}"
+   onClick="javascript:show_details('{{ item.itemuniqueidentifier }}',event)">{{ item.itemidentifier }}</A></td>
+   <td>{{ item.revisionidentifier }}</td>
+   <td>{{ item.description }}</td>
+   <td>{{ item.category }}</td>
+   <td style="text-align:center">{{ item.acount }}</td>
+   <td style="text-align:center">{{ item.gcount }}</td>
+</tr>
+{% endfor %}
+</table>
+
+<p>
+<A HREF="javascript:go_to_top()">Top</A>
+
+</FORM>
+<hr noshade>
+
+{% include "footer.html" %}
+
+</div> <!--- end pageone -->
+
+<script type="text/javascript">
+function go_to_top()
+{
+    var pos = $('a[name="top"]').offset().top;
+    $("html,body").animate({scrollTop:pos},'slow');
+    return;
+}
+
+function popdown()
+{
+	$('#details').hide();
+}
+function show_details(item ,evt)
+{
+	var e = e || evt || window.event;
+	$('#details').hide();
+	
+	// alert('item is '+item);
+	
+	$.ajax({
+                url: '/getitem?item='+item,
+		type: 'GET',
+		success: function(response) {
+			$('#details').css({
+				'top':e.pageY-180,
+				'left':e.pageX+10,
+				'position':'absolute'
+			});
+			$('#dcontents').html( response );
+			$("html,body").animate({scrollTop:e.pageY-200},'slow');
+			$('#details').show();
+			return
+		},
+		error: function(error) {
+			$('#details').css({
+				'top':e.pageY-180,
+				'left':e.pageX+10,
+				'position':'absolute'
+			});
+			$('#dcontents').html( response );
+			$("html,body").animate({scrollTop:e.pageY-200},'slow');
+			$('#details').show();
+			return
+		}
+	});
+	
+	return;
+}
+</script>
+
+</body>
+</html>
