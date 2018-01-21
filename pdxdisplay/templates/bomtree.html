@@ -78,23 +78,58 @@ function show_details(item ,evt)
 		type: 'GET',
 		success: function(response) {
 			$('#details').css({
-				'top':e.pageY,
+				'top':e.pageY-10,
 				'left':40,
 				'position':'absolute'
 			});
 			$('#dcontents').html( response );
-			$("html,body").animate({scrollTop:e.pageY},'slow');
+			$("html,body").animate({scrollTop:e.pageY-10},'slow');
 			$('#details').show();
 			return
 		},
 		error: function(error) {
 			$('#details').css({
-				'top':e.pageY,
+				'top':e.pageY-10,
 				'left':40,
 				'position':'absolute'
 			});
 			$('#dcontents').html( response );
-			$("html,body").animate({scrollTop:e.pageY},'slow');
+			$("html,body").animate({scrollTop:e.pageY-10},'slow');
+			$('#details').show();
+			return
+		}
+	});
+	
+	return;
+}
+
+function show_bomdetails(source ,target,evt)
+{
+	var e = e || evt || window.event;
+	$('#details').hide();
+	
+	$.ajax({
+                url: '/getbomitem?source='+source+'&target='+target,
+		type: 'GET',
+		success: function(response) {
+			$('#details').css({
+				'top':e.pageY-10,
+				'left':40,
+				'position':'absolute'
+			});
+			$('#dcontents').html( response );
+			$("html,body").animate({scrollTop:e.pageY-10},'slow');
+			$('#details').show();
+			return
+		},
+		error: function(error) {
+			$('#details').css({
+				'top':e.pageY-10,
+				'left':40,
+				'position':'absolute'
+			});
+			$('#dcontents').html( response );
+			$("html,body").animate({scrollTop:e.pageY-10},'slow');
 			$('#details').show();
 			return
 		}

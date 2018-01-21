@@ -1,0 +1,72 @@
+<p>
+<span style="float:left;font-size:1.5em;"><b>Bill of Material Item Details</b>
+&nbsp;<span style="font-style:italic;color:#888888">(UID: {{ var.item.itemuniqueidentifier }})</span></span>
+<span style="display:block;text-align:right;">
+<A HREF="javascript:popdown()">Close</A></span>
+</p>
+
+<table border=1 cellspacing=0 cellpadding=2
+style="margin:4pt 10pt 4pt 10pt;width:95%">
+<tr style="background:#CCCCCC">
+   <th>Parameter</th>
+   <th>Value</th>
+</tr>
+<tr style="background:444444">
+   <td><i>Parent Item UID</i></td>
+   <td><span style="color:#888888">{{ var.bom.itemuniqueidentifier }}</span></td>
+</tr>
+<tr style="background:white">
+   <td><i>BOM Item Description</i></td>
+   <td><b>{{ var.item.description }}</b></td>
+</tr>
+<!-- tr style="background:white">
+   <td><i>Description</i></td>
+   <td><b>{{ var.bom.description }}</b></td>
+</tr -->
+<tr style="background:#FFFFAA">
+   <td><i>BOM Item ID</i></td>
+   <td><b>{{ var.bom.billofmaterialitemidentifier }}</b></td>
+</tr>   
+<tr style="background:white">
+   <td><i>BOM Item UID</i></td>
+   <td><span style="color:#888888">{{ var.bom.billofmaterialitemuniqueidentifier }}</span></td>
+</tr>   
+<tr style="background:#FFFFAA">
+   <td><i>Revision ID</i></td>
+   <td><b>{{ var.bom.revisionidentifier }}</b></td>
+</tr>
+<tr style="background:white">
+   <td><i>Quantity</i></td>
+   <td><b>{{ var.bom.itemquantity }}</b></td>
+</tr>   
+
+<tr style="background:#FFFFAA">
+   <td><i>Is Serialization Required?</i></td>
+   <td>{{ var.bom.isserializationrequired }}</td>
+</tr>   
+<tr style="background:white">
+   <td><i>Global BOM Type Code</i></td>
+   <td>{{ var.bom.globalbillofmaterialtypecode }}</td>
+</tr>   
+<tr style="background:#FFFFAA">
+   <td><i>Global BOM Type Code Other</i></td>
+   <td>{{ var.bom.globalbillofmaterialtypecodeother }}</td>
+</tr>   
+<tr style="background:white">
+   <td><i>Notes</i></td>
+   <td>{{ var.bom.notes }}</td>
+</tr>   
+<tr style="background:#FFFFAA">
+   <td><i>Global Product Qty Type Code</i></td>
+   <td>{{ var.bom.globalproductquantitytypecode }}</td>
+</tr>   
+<tr style="background:white">
+   <td><i>Global Product Qty Type Code Other</i></td>
+   <td>{{ globalproductquantitytypecodeother }}</td>
+</tr>   
+<tr style="background:#FFFFAA">
+   <td><i>Porprietary Sequence ID</i></td>
+   <td>{{ var.bom.proprietarysequenceidentifier }}</td>
+</tr>
+</table>
+

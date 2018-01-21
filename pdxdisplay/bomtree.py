@@ -56,7 +56,7 @@ def add_expand_button(uid,var):
     
     icount = var['itemcount']
 
-    button  = ("document.getElementById('hold-%s').style.background = \"#88FF88\";\n" % uid)
+    button  = ("document.getElementById('hold-%s').style.background = \"#0000FF\";\n" % uid)
     button += ("document.getElementById('cbox-%s').disabled = false;\n" % uid)
     
     var['expand_all'] += "   document.getElementById('cbox-%s').checked = true;\n" % uid
@@ -128,7 +128,7 @@ def find_children( uid, level, multiplier, db, var ):
         
         ttitle = row['tdescription'] if row['tdescription']!=None else "(missing)"
         
-        cbox = ("<span ID='hold-%s' style='background:#5555FF;border:1px solid #DDDDDD'>\n" % (target))
+        cbox = ("<span ID='hold-%s' style='padding:4pt 1pt 1pt 1pt;background:#DDDDDD;border:1px solid #DDDDDD'>\n" % (target))
         cbox += "<INPUT TYPE='checkbox' ID='cbox-%s' onChange=\"javascript:expand_tree('%d')\" disabled='true'" % (target,icount)
         cbox += "style='margin:2pt 2pt 2pt 2pt;foreground:green'></span>\n"
          

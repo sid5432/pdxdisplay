@@ -21,6 +21,7 @@ from pdxdisplay import partsmaster
 from pdxdisplay import getitem
 from pdxdisplay import upload
 from pdxdisplay import bomtree
+from pdxdisplay import getbomitem
 
 ALLOWED_EXTENSIONS = set( ['xml'] )
 
@@ -157,6 +158,23 @@ def getitem_app():
     db.close()
     if var['error'] == None:
         return render_template('getitem.html',var=var)
+    else:
+        return render_template('error_insert.html',var=var)
+
+# -------------------------------------------------------------------------
+@app.route("/getbomitem",methods=['GET','POST'])
+def getbomitem_app():
+    s_uid = request.values.get('source')
+    t_uid = request.values.get('target')
+    
+    db,var = get_db(dsn)
+    if var['error'] != None or db == None:
+        return render_template('error.html',var=var)
+    
+    var = getbomitem.getbomitem(db, s_uid, t_uid)
+    db.close()
+    if var['error'] == None:
+        return render_template('getbomitem.html',var=var)
     else:
         return render_template('error_insert.html',var=var)
 
