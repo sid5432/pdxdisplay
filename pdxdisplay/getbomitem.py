@@ -3,6 +3,10 @@ from __future__ import absolute_import, print_function, unicode_literals
 import sys
 import os
 import copy
+import string
+
+# only used for Python2
+printable = set(string.printable)
 
 from . import dbutils
 
@@ -32,6 +36,9 @@ def getbomitem(db, s_uid, t_uid):
         for name in row.keys():
             if name[:2] == 'is':
                 row[name] = 'Yes' if row[name] else 'No'
+        
+        if sys.version_info[0] < 3 and row['description'] != None:
+            row['description'] = filter(lambda x: x in printable, row['description'])
         
         var['item'] = row
         rcount += 1

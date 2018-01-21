@@ -4,6 +4,11 @@ import sys
 import os
 import copy
 from flask import flash
+import copy
+import string
+
+# only used for Python2
+printable = set(string.printable)
 
 from . import dbutils
 
@@ -31,6 +36,9 @@ def process(db, uid):
         for name in row.keys():
             if name[:2] == 'is':
                 row[name] = 'Yes' if row[name] else 'No'
+        
+        if sys.version_info[0] < 3 and row['description'] != None:
+            row['description'] = filter(lambda x: x in printable, row['description'])
         
         var['root'] = row
     
@@ -110,7 +118,13 @@ def find_children( uid, level, multiplier, db, var ):
     var['contents'] += ("\n<div ID='div-%s' " % var['itemcount'])
     var['contents'] += " style='padding-left:%s;padding-right:25pt;display:%s;border:1px solid #CCCCCC;'>\n" % (pad,display)
     
-    for row in results:
+    for xrow in results:
+        # NOTE: for postgres (psycopg2) we can modify row[name] directly,
+        # but not with sqlite3
+        row = copy.deepcopy( dict(xrow) )
+        if sys.version_info[0] < 3 and row['tdescription'] != None:
+            row['tdescription'] = filter(lambda x: x in printable, row['tdescription'])
+        
         var['itemcount'] += 1
         icount = var['itemcount']
         # print("got ",row)

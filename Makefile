@@ -3,7 +3,7 @@ clean:
 
 realclean: clean
 	rm -rf  *.pyc */*.pyc */__pycache__ __pycache__ .cache */.cache
-	rm -rf build dist pypdx.egg-info
+	rm -rf build dist pdxdisplay.egg-info
 	
 build: realclean
 	python setup.py build
@@ -33,7 +33,7 @@ html: doc
 	rst2html5.py README.rst > README.html
 		
 tag:
-	git tag `grep version pypdx/__init__.py | cut -d '"' -f 2` -m "Add a tag so we can put this on PyPI"
+	git tag `grep __version__ pdxdisplay/__init__.py | cut -d '"' -f 2` -m "Add a tag so we can put this on PyPI"
 	# git push --tag origin master
 	git push --tag
 	
