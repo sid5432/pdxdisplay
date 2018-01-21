@@ -2,6 +2,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import sys
 import os
+import copy
 
 from . import dbutils
 
@@ -11,9 +12,7 @@ def getitem(db, uid):
     
     # mstr = "select * from partsmaster where itemuniqueidentifier='"+uid+"';"
     mstr = "select * from partsmaster where itemuniqueidentifier = "
-    placeholder = "%s"
-    if db.dbtype == 'sqlite3':
-        placeholder = "?"
+    placeholder = db.placeholder
     
     cur = db.conn.cursor()
     try:
@@ -24,7 +23,10 @@ def getitem(db, uid):
     
     var['item'] = None
     rcount = 0
-    for row in cur:
+    for xrow in cur:
+        # NOTE: for postgres (psycopg2) we can modify row[name] directly,
+        # but not with sqlite3
+        row = copy.deepcopy( dict(xrow) )
         # there should be only one item
         for name in row.keys():
             if name[:2] == 'is':
@@ -48,7 +50,8 @@ def getitem(db, uid):
     
     var['attachment'] = []
     rcount = 0
-    for row in cur:
+    for xrow in cur:
+        row = copy.deepcopy( dict(xrow) )
         # there can be more than one item
         for name in row.keys():
             if name[:2] == 'is':
@@ -72,7 +75,8 @@ def getitem(db, uid):
     
     var['mfg'] = []
     rcount = 0
-    for row in cur:
+    for xrow in cur:
+        row = copy.deepcopy( dict(xrow) )
         # there can be more than one item
         for name in row.keys():
             if name[:2] == 'is':
@@ -85,5 +89,3 @@ def getitem(db, uid):
     cur.close()
     
     return var
-    
-        

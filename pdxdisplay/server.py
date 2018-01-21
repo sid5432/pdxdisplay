@@ -3,8 +3,10 @@ from __future__ import absolute_import, print_function, unicode_literals
 import sys
 import os
 import re
+import signal
+import tempfile
 from flask import Flask
-from flask import request,url_for,redirect,render_template,request
+from flask import request,url_for,redirect,render_template,request,flash
 
 if __name__ == '__main__':
     cdir = os.path.dirname( os.path.realpath(__file__) )
@@ -17,76 +19,171 @@ import pdxdisplay
 from pdxdisplay import homepage
 from pdxdisplay import partsmaster
 from pdxdisplay import getitem
+from pdxdisplay import upload
+from pdxdisplay import bomtree
 
-if len(sys.argv) < 2:
-    print("USAGE: %s DNS-string")
-    sys.exit(1)
+ALLOWED_EXTENSIONS = set( ['xml'] )
 
-dns = sys.argv[1]
-debug = True # ---------- turn off for production
+debug = False
+if 'FLASK_DEBUG' in os.environ and os.environ['FLASK_DEBUG'] == 1:
+    print("** DEBUG MODE ON **")
+    debug = True
 
-try:
-    if dns == 'pg':
-        dns = "dbname='pdx' user='pdxuser' host='localhost' port=5432"
-        db = dbconn.DBconn(dns, dbtype='pg',debug=debug)
-    elif dns[-8:] == '.sqlite3':
-        db = dbconn.DBconn(dns, dbtype='sqlite3',debug=debug)
-    elif re.match('dbname\s*=', dns) != None:
-        db = dbconn.DBconn(dns, dbtype='pg',debug=debug)
-    else:
-        print("Unrecognized DNS %s" % dns)
-        sys.exit()
+dsn = None
+if 'PDX_DSN' in os.environ:
+    dsn = os.environ['PDX_DSN']
 
-except IOError as e:
-    print("Connection Failed ",e)
-    sys.exit(1)
+if dsn == None:
+    print("You need to set the database DSN via the environment variable PDX_DSN")
+    # need to use this to exit when using "flask run"
+    os.kill( os.getpid(), signal.SIGTERM)
+    # sys.exit(1)
+
+def get_db( dsn ):
+    var = {}
+    db = None
+    var['error'] = None
+    try:
+        if dsn == 'pg':
+            dsn = "dbname='pdx' user='pdxuser' host='localhost' port=5432"
+            db = dbconn.DBconn(dsn, dbtype='pg',debug=debug)
+            db.placeholder = '%s'
+        elif dsn[-8:] == '.sqlite3':
+            # Note: cannot use in-memory (:memory:) here
+            db = dbconn.DBconn(dsn, dbtype='sqlite3',debug=debug)
+            db.placeholder = '?'
+        elif re.match('dbname\s*=', dsn) != None:
+            db = dbconn.DBconn(dsn, dbtype='pg',debug=debug)
+            db.placeholder = '%s'
+        elif dsn == ':memory:':
+            var['error'] = "Sorry, can't use :memory: here"
+        else:
+            var['error'] = "Unrecognized DSN %s" % dsn
+        
+    except IOError as e:
+        var['error'] = "Database connection failed "+e.__repr__()
+    
+    return db, var
+
+# make sure we can connect
+db, var = get_db(dsn)
+
+if var['error'] != None or db == None:
+    print(var['error'])
+    os.kill( os.getpid(), signal.SIGTERM)
+
+db.close()
+
+def allowed_file(filename):
+    return '.' in filename and \
+    filename.rsplit('.',1)[1].lower() in ALLOWED_EXTENSIONS
 
 # =========================================================================
 # load flask
 app = Flask(__name__)
+app.secret_key = "yskl6z5itoomanysecrets"
 
+# -------------------------------------------------------------------------
 @app.route("/",methods=['GET','POST'])
 def homepage_app():
+    db, var = get_db(dsn)
+    if var['error'] != None or db == None:
+        return render_template('error.html',var=var)
+    
+    dbtype = db.dbtype
+    
+    # proceeed....
+    # see if this is an upload
     if request.method == 'POST':
-        return "Hello World! POST"
-    else:
-        var = homepage.process(dns,db)
-        if var['error'] != None:
-            return render_template('error.html',var=var)
+        cleardata = request.values.get('clearall')
+        cleardata = True if cleardata=='on' else False;
+
+        # print("try to upload")
+        xmlfile = ""
+        if 'pdxfile' in request.files:
+            xmldata = request.files['pdxfile']
+            
+            if xmldata.filename == '':
+                flash("no file selected")
+            elif xmldata and allowed_file(xmldata.filename):
+                var = upload.process( xmldata, cleardata, dsn, dbtype, debug=debug )
+                if var['error'] != None:
+                    return render_template('error.html',var=var)
+                else:
+                    if cleardata:
+                        flash("Old data removed by request.")
+                    
+                    flash("XML data successfully uploaded.")
+            else:
+                flash("File type not allowed")
+        
         else:
-            return render_template('homepage.html', var=var)
+            print("** no file **")
+            pass
+    
+    # continue with display of top level items
+    var = homepage.process(db)
+    db.close()
+    if var['error'] != None:
+        return render_template('error.html',var=var)
+    else:
+        return render_template('homepage.html', var=var)
 
-@app.route("/upload")
-def upload():
-    return "upload PDX file"
-
+# -------------------------------------------------------------------------
 @app.route("/partsmaster",methods=['GET','POST'])
 def partsmaster_app():
     sortby = request.args.get('sort')
+    db,var = get_db(dsn)
+    if var['error'] != None or db == None:
+        return render_template('error.html',var=var)
     
     var = partsmaster.process(db,sortby)
+    db.close()
     if var['error'] != None:
         return render_template('error.html',var=var)
     else:
         return render_template('partsmaster.html',var=var)
 
+# -------------------------------------------------------------------------
 @app.route("/getitem",methods=['GET','POST'])
 def getitem_app():
     uid = request.args.get('item')
     # var = { 'item': uid }
+    db,var = get_db(dsn)
+    if var['error'] != None or db == None:
+        return render_template('error.html',var=var)
+    
     var = getitem.getitem(db, uid)
+    db.close()
     if var['error'] == None:
         return render_template('getitem.html',var=var)
     else:
         return render_template('error_insert.html',var=var)
 
+# -------------------------------------------------------------------------
+@app.route("/bom",methods=['GET','POST'])
+def bomtree_app():
+    uid = request.args.get('item')
+    db,var = get_db(dsn)
+    if var['error'] != None or db == None:
+        return render_template('error.html',var=var)
+    
+    var = bomtree.process(db, uid)
+    db.close()
+    if var['error'] == None:
+        return render_template('bomtree.html',var=var)
+    else:
+        return render_template('error.html',var=var)
+    
+
+# -------------------------------------------------------------------------
 @app.errorhandler(404)
 def custom_401(error):
     var = {}
     var['error'] = error
     return render_template('error.html',var=var)
 
-# -------- static routes ---------------------------
+# --------------- static routes ------------------------------------------
 @app.route("/img/<imagename>")
 def load_img(imagename):
     return redirect( url_for('static', filename=('img/%s' % imagename)) )
@@ -102,8 +199,7 @@ def load_ss(sname):
 # =========================================================
 if __name__ == '__main__':
     extra_files = ['templates/*.html']
-    
-    app.run( extra_files=extra_files, debug=debug )
+    app.run( extra_files=extra_files )
     # app.run( ssl_context="adhoc" )
     
     

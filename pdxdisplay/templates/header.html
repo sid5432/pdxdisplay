@@ -4,7 +4,10 @@
   <head>
     <title>PDX (Product Data eXchange) XML Parser</title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
-    <script type="text/javascript" src='/javascripts/jquery.min.js'></script>
+    <script type="text/javascript" src='http://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
+    <script type="text/javascript">
+    !window.jQuery && document.write('<script src="/javascripts/jquery.min.js"><\/script>')
+    </script>
   </head>
 <body>
 <span float="left"><A HREF="/">Home</A>
@@ -12,3 +15,16 @@
 </span>
 
 <h1 style="text-align:center">PDX (Product Data eXchange) XML Parser</h1>
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+  <blockquote style="margin:0pt 0pt 10pt 0pt;background:#FFCCCC;border:2px solid red;padding:4pt 10pt 4pt 10pt">
+  <ul class=flashes>
+    {% for message in messages %}
+    <li>{{ message }}</li>
+    {% endfor %}
+  </ul>
+  </blockquote>
+  {% endif %}
+{% endwith %}
+

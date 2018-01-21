@@ -7,7 +7,7 @@ import time
 
 from . import dbutils
 
-def process(dns, db):
+def process(db):
     var = {}
     var['date'] = datetime.datetime.fromtimestamp( time.time() ).strftime('%Y-%m-%d %H:%M:%S')
     var['error'] = None

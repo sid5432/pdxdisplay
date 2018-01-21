@@ -1,0 +1,150 @@
+{% include "header.html" %}
+
+   <div ID="details"
+   style="z-index:100;position:absolute;left:50%;top:0px;
+   border:8pt solid #444444;background-color:#EEEEFF;
+   width:650pt;padding:10pt 20pt 10pt
+   20pt;display:none;">
+   <div ID="dcontents"></div>
+		
+   <A HREF="javascript:popdown()">Close</A>		
+   </div>
+
+<div ID="pageone">
+<A NAME="top"></A>
+<p style="font-size:1.5em;"><span style="font-weight:bold">Bill of Materials:</span>
+<A HREF="#top" onClick="javascript:show_details('{{ var.root.itemuniqueidentifier }}',event)">{{ var.root.description }}</A>
+&nbsp;(<i>rev. {{ var.root.revisionidentifier }}</i>)
+</p>
+
+<p>
+<INPUT TYPE="button" VALUE="toggle expand/collapse"
+ style="background:#88FF88;margin:0pt 0pt 0pt 0pt;font-weight:bold;"
+ onClick="javascript:toggle_expand()"/>
+<INPUT TYPE="button" VALUE="instructions"
+ style="background:#8888FF;margin:0pt 0pt 0pt 0pt;font-weight:bold;"
+ onClick="javascript:show_hide()"/>
+
+<blockquote ID="notes" style="margin:4pt 10pt 10pt 20pt;border:solid 1px red;
+display:none">
+<ul>
+<li>Use the "toggle expand/collapse" button to expand or collapse the
+BOM tree.  The documents with branches are shown with a green
+checkbox.  You can click on the checkbox to expand or collapse the
+branch.
+
+<li>Click on the <span
+style="font-size:smaller;color:blue;font-weight:bold">parts description</span> to
+pull up the parts master record.
+
+<li>Click on the <span
+style="font-size:smaller;color:red;font-weight:bold">part ID</span> to
+pull up the BOM <i>link</i> record.
+
+</blockquote>
+
+{{ var.contents|safe }}
+
+<p>
+<A HREF="javascript:go_to_top()">top</A>
+
+<hr noshade>
+
+{% include "footer.html" %}
+
+</div> <!--- end pageone -->
+
+<script type="text/javascript">
+function go_to_top()
+{
+    var pos = $('a[name="top"]').offset().top;
+    $("html,body").animate({scrollTop:pos},'slow');
+    return;
+}
+
+function popdown()
+{
+	$('#details').hide();
+}
+function show_details(item ,evt)
+{
+	var e = e || evt || window.event;
+	$('#details').hide();
+	
+	// alert('item is '+item);
+	
+	$.ajax({
+                url: '/getitem?item='+item,
+		type: 'GET',
+		success: function(response) {
+			$('#details').css({
+				'top':e.pageY,
+				'left':40,
+				'position':'absolute'
+			});
+			$('#dcontents').html( response );
+			$("html,body").animate({scrollTop:e.pageY},'slow');
+			$('#details').show();
+			return
+		},
+		error: function(error) {
+			$('#details').css({
+				'top':e.pageY,
+				'left':40,
+				'position':'absolute'
+			});
+			$('#dcontents').html( response );
+			$("html,body").animate({scrollTop:e.pageY},'slow');
+			$('#details').show();
+			return
+		}
+	});
+	
+	return;
+}
+
+function show_hide() {
+	var tt = $('#notes');
+	tt.animate({height:'toggle',opacity:'toggle'},'fast');
+	
+	return;
+}
+
+function expand_tree(uid) {
+	var tt = $("#div-"+uid);
+	tt.animate({height:'toggle',opacity:'toggle'},'fast');
+	// var st = document.getElementById('div-'+uid)
+	// st.style.display = 'block'
+	
+	return;
+}
+
+{{ var.set_expand_buttons|safe }}
+
+function expand_all() {
+    {{ var.expand_all|safe }}
+    return;
+}
+ 
+function collapse_all() {
+    {{ var.collapse_all|safe }}
+    return;
+}
+
+var collapsed = true;
+function toggle_expand()
+{
+	if ( collapsed ) {
+		expand_all();
+		collapsed = false;
+	}else{
+		collapse_all();
+		collapsed = true;
+	}
+	return;
+}
+
+</script>
+
+</body>
+</html>
