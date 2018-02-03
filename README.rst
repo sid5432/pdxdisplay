@@ -127,7 +127,7 @@ external connections, set the environment variable *PDX_EXTACCESS* to 1:
 
 ::
 
-    % export PDX_EXACCESS=1
+    % export PDX_EXTACCESS=1
 
 before running *pdxdisplay* (but keep in mind that the connection is not
 encrypted, nor is there any authentication).
