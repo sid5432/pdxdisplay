@@ -121,6 +121,17 @@ Running the *pdxdisplay* program will start the Flask web server at
 
 You can then connect to this URL with your web browser.
 
+By default *Flask* does not accept external connections (i.e.,
+connections from outside your computer). If you really want to accept
+external connections, set the environment variable *PDX_EXTACCESS* to 1:
+
+::
+
+    % export PDX_EXACCESS=1
+
+before running *pdxdisplay* (but keep in mind that the connection is not
+encrypted, nor is there any authentication).
+
 Note that you do not really need to install the PostgreSQL component if
 you do not care for the PostgreSQL database. You should still be able to
 use the program without installing the *psycopg2* module, since it is
@@ -128,8 +139,8 @@ not imported unless you specify the PostgreSQL database option. But
 there maybe dependencies issues when trying to install this through
 *pip*.
 
-Issues with Python2
--------------------
+Issues with Python2 and Unicode
+-------------------------------
 
 The *pdxdisplay* program was tested primarily with Python3, and for best
 results you should use the Python3. If you are running one of the Ubuntu
@@ -149,6 +160,18 @@ program does not check for this in other fields. If there are non-ASCII
 characters in those fields, the program will likely crash (but, as I
 said, only if you are using Python2).
 
+Even in Python3, you need to watch out for the database encoding. For
+postgreSQL, you may run into trouble if your database has ASCII
+encoding, but your PDX XML file has UTF-8 characters. If you are trying
+to run this in a `Ubuntu docker
+container <https://hub.docker.com/_/ubuntu/>`__ for example, set the
+environment variables to:
+
+::
+
+    % export LC_ALL=C.UTF-8
+    % export LANG=C.UTF-8
+
 Closing Remarks
 ---------------
 
@@ -160,4 +183,4 @@ and the *pdxdisplay* program has been very limited. While I believe the
 implementation to be correct (if incomplete), there is always the
 possibility of bugs. So use at your own risk; you have been warned!
 
-(*Last Revised 2018-01-21*)
+(*Last Revised 2018-02-02*)

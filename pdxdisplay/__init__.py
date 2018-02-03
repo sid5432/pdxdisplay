@@ -8,7 +8,7 @@ import tempfile
 from flask import Flask
 from flask import request,url_for,redirect,render_template,request,flash
 
-__version__ = "0.0.1a1"
+__version__ = "0.0.1a2"
 
 if __name__ == '__main__':
     cdir = os.path.dirname( os.path.realpath(__file__) )
@@ -219,7 +219,19 @@ def load_ss(sname):
 
 def main():
     extra_files = ['templates/*.html']
-    app.run( extra_files=extra_files, debug=debug )
+    
+    extaccess = False
+    if 'PDX_EXTACCESS' in os.environ:
+        ea = os.environ['PDX_EXTACCESS']
+        if ea == '1':
+            extaccess = True
+    
+    if extaccess:
+        print("* Allowing external access", extaccess)
+        app.run( host='0.0.0.0', extra_files=extra_files, debug=debug )
+    else:
+        app.run( extra_files=extra_files, debug=debug )
+
     # app.run( ssl_context="adhoc" )
     
 

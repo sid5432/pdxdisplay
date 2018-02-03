@@ -22,7 +22,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 setup(
       name='pdxdisplay',
-      version='0.0.1a1',
+      version='0.0.1a2',
       
       description='Simple web application for viewing PDX (Product Data eXchange) XML files',
       long_description=long_description,
