@@ -172,6 +172,20 @@ environment variables to:
     % export LC_ALL=C.UTF-8
     % export LANG=C.UTF-8
 
+Docker Container
+----------------
+
+If you have *docker* installed on your system and would like to try out
+*pdxdisplay* with a PostgreSQL database, you can try the docker
+container:
+
+::
+
+    docker pull sidneyli/pdx:latest
+
+or build the container yourself (please see my `github
+page <https://github.com/sid5432/pdx-docker>`__ for details).
+
 Closing Remarks
 ---------------
 
@@ -183,4 +197,4 @@ and the *pdxdisplay* program has been very limited. While I believe the
 implementation to be correct (if incomplete), there is always the
 possibility of bugs. So use at your own risk; you have been warned!
 
-(*Last Revised 2018-02-02*)
+(*Last Revised 2018-02-03*)
